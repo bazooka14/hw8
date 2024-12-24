@@ -5,6 +5,8 @@ from requests import get, put
 import urllib.parse
 import json
 
+token = input("Введите OAuth токен: ")
+
 def run(handler_class=BaseHTTPRequestHandler):
     server_address = ('', 8000)
     httpd = HTTPServer(server_address, handler_class)
@@ -18,7 +20,7 @@ class HttpGetHandler(BaseHTTPRequestHandler):
         ya_folder = "Backup"
         resp = get(
             f"https://cloud-api.yandex.net/v1/disk/resources?path={urllib.parse.quote(ya_folder)}",
-            headers={"Authorization": ""},
+            headers={"Authorization": f"OAuth {token}"},
         )
         if resp.status_code == 200:
             items = json.loads(resp.text).get("_embedded", {}).get("items", [])
@@ -60,7 +62,7 @@ class HttpGetHandler(BaseHTTPRequestHandler):
 
         resp = get(
             f"https://cloud-api.yandex.net/v1/disk/resources/upload?path={ya_path}",
-            headers={"Authorization": ""}
+            headers={"Authorization": f"OAuth {token}"}
         )
         print(resp.text)
         upload_url = json.loads(resp.text).get("href")
